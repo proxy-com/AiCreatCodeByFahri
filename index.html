@@ -1,0 +1,343 @@
+<!doctype html>
+
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CodeGen AI — Asisten Pembuat Kode</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- highlight.js -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cpp.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/cs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/rust.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/kotlin.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/swift.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121a33; --muted:#93a4c4; --text:#e6edff; --brand:#6aa6ff; --accent:#b983ff; --ok:#67e8a7; --warn:#ffd166; --err:#ff6b6b;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; padding:24px; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,Helvetica,sans-serif; color:var(--text); background:radial-gradient(1200px 600px at 10% -10%, #1f2648 0%, #0b1020 60%), radial-gradient(1000px 800px at 120% 10%, #1a1038 0%, #0b1020 40%);
+    }
+    .wrap{max-width:1100px; margin:0 auto;}
+    header{display:flex; gap:14px; align-items:center; margin-bottom:20px}
+    .logo{width:40px; height:40px; border-radius:12px; background:linear-gradient(135deg,var(--brand),var(--accent)); box-shadow:0 10px 30px rgba(106,166,255,.25);} 
+    h1{font-size:22px; margin:0}
+    .sub{color:var(--muted); font-size:13px}.grid{display:grid; grid-template-columns: 360px 1fr; gap:16px}
+@media (max-width: 920px){ .grid{grid-template-columns:1fr} }
+
+.card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)); border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); box-shadow:0 10px 30px rgba(0,0,0,.25);} 
+.card .hd{padding:16px 16px 0 16px}
+.card .bd{padding:16px}
+.row{display:flex; gap:10px}
+label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px 2px}
+input, select, textarea{width:100%; border:1px solid rgba(255,255,255,.12); background:#0c1430; color:var(--text); border-radius:12px; padding:10px 12px; outline:0}
+textarea{min-height:140px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+.btns{display:flex; gap:10px; flex-wrap:wrap}
+button{border:0; background:linear-gradient(135deg,var(--brand),var(--accent)); color:white; padding:10px 14px; border-radius:12px; font-weight:600; cursor:pointer}
+button.secondary{background:#0c1430; border:1px solid rgba(255,255,255,.14); color:var(--text)}
+button.ghost{background:transparent; border:1px dashed rgba(255,255,255,.2)}
+button:disabled{opacity:.6; cursor:not-allowed}
+
+.out{position:relative;}
+pre{margin:0; max-height:560px; overflow:auto; padding:18px; border-top-left-radius:0; border-top-right-radius:0}
+.toolbar{display:flex; gap:8px; padding:10px; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.08)}
+.toolbar .left{display:flex; gap:8px; align-items:center}
+.pill{font-size:12px; color:var(--muted); background:#0c1430; border:1px solid rgba(255,255,255,.12); padding:6px 10px; border-radius:999px}
+
+.tips{display:flex; flex-wrap:wrap; gap:8px}
+.chip{font-size:12px; color:#b7c6e9; background:#0e1840; border:1px solid rgba(255,255,255,.12); padding:6px 10px; border-radius:999px; cursor:pointer}
+.status{margin-top:8px; color:var(--muted); font-size:12px}
+.foot{margin-top:18px; font-size:11px; color:var(--muted)}
+.foot a{color:#b7c6e9}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo"></div>
+      <div>
+        <h1>CodeGen AI — Asisten Pembuat Kode</h1>
+        <div class="sub">Model AI khusus untuk menghasilkan kode (HTML, CSS, JavaScript, Java, dan lainnya). Masukkan API‑key & model dari penyedia AI favorit Anda.</div>
+      </div>
+    </header><div class="grid">
+  <section class="card">
+    <div class="hd"><strong>Pengaturan & Prompt</strong></div>
+    <div class="bd">
+      <div class="row">
+        <div style="flex:1">
+          <label>Base URL (mis. https://api.openai.com/v1 atau server kompatibel)</label>
+          <input id="baseUrl" placeholder="https://api.openai.com/v1" />
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1">
+          <label>Model</label>
+          <input id="model" placeholder="gpt-4o, gpt-4o-mini, llama-3.1-70b-instruct, dll." />
+        </div>
+        <div style="width:200px">
+          <label>API Key</label>
+          <input id="apiKey" type="password" placeholder="sk-..." />
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1">
+          <label>Bahasa Kode</label>
+          <select id="language">
+            <option>html</option>
+            <option>css</option>
+            <option>javascript</option>
+            <option>java</option>
+            <option>python</option>
+            <option>php</option>
+            <option>csharp</option>
+            <option>cpp</option>
+            <option>go</option>
+            <option>rust</option>
+            <option>kotlin</option>
+            <option>swift</option>
+            <option>sql</option>
+          </select>
+        </div>
+        <div style="width:160px">
+          <label>Temperature</label>
+          <input id="temp" type="number" min="0" max="2" step="0.1" value="0.2" />
+        </div>
+        <div style="width:160px">
+          <label>Max Tokens</label>
+          <input id="maxTok" type="number" min="64" max="8192" step="64" value="1024" />
+        </div>
+      </div>
+
+      <label>Instruksi / Tugas</label>
+      <textarea id="prompt" placeholder="Contoh: Buat landing page responsif dengan navbar, hero, dan footer. Gunakan CSS grid, aksesibilitas, dan komentar di setiap bagian."></textarea>
+
+      <div class="tips" id="tips"></div>
+
+      <div class="btns" style="margin-top:12px">
+        <button id="btnGen">🚀 Generate Kode</button>
+        <button id="btnStop" class="secondary">⏹️ Stop</button>
+        <button id="btnClear" class="ghost">🧹 Clear</button>
+        <label class="pill"><input id="showSystem" type="checkbox" /> Tampilkan System Prompt</label>
+      </div>
+      <div class="status" id="status">Siap.</div>
+
+      <div class="foot">Keamanan: menyimpan API key di browser bersifat <em>opsional</em> dan berisiko. Gunakan hanya pada perangkat tepercaya. Anda dapat menjalankan proxy/server sendiri untuk menyembunyikan API key dari browser.</div>
+    </div>
+  </section>
+
+  <section class="card out">
+    <div class="toolbar">
+      <div class="left">
+        <span class="pill">Output: <span id="langPill">html</span></span>
+      </div>
+      <div class="btns">
+        <button id="btnCopy" class="secondary">📋 Copy</button>
+        <button id="btnDownload">💾 Download</button>
+      </div>
+    </div>
+    <pre><code id="code" class="language-html">/* Kode akan muncul di sini */</code></pre>
+  </section>
+</div>
+
+<section class="card" style="margin-top:16px;">
+  <div class="hd"><strong>System Prompt (opsional)</strong></div>
+  <div class="bd">
+    <textarea id="system" style="min-height:110px" placeholder="Anda adalah asisten coding ahli. Saat bahasa = HTML, buat berkas HTML lengkap, semantik, aksesibel, dengan CSS terpisah jika perlu. Sertakan komentar, jelaskan asumsi, dan berikan instruksi build/jalankan jika relevan. Hindari placeholder kosong."></textarea>
+  </div>
+</section>
+
+<section class="foot">
+  <p>Tips penggunaan model: model apa pun yang kompatibel dengan endpoint <code>/v1/chat/completions</code> biasanya dapat dipakai. Contoh penyedia: OpenAI‑compatible server, atau gateway pihak ketiga yang kompatibel. Sesuaikan <em>Base URL</em> & <em>Model</em> sesuai dokumentasi penyedia Anda.</p>
+</section>
+
+  </div>  <script>
+    const els = {
+      baseUrl: document.getElementById('baseUrl'),
+      model: document.getElementById('model'),
+      apiKey: document.getElementById('apiKey'),
+      language: document.getElementById('language'),
+      temp: document.getElementById('temp'),
+      maxTok: document.getElementById('maxTok'),
+      prompt: document.getElementById('prompt'),
+      system: document.getElementById('system'),
+      btnGen: document.getElementById('btnGen'),
+      btnStop: document.getElementById('btnStop'),
+      btnClear: document.getElementById('btnClear'),
+      btnCopy: document.getElementById('btnCopy'),
+      btnDownload: document.getElementById('btnDownload'),
+      code: document.getElementById('code'),
+      langPill: document.getElementById('langPill'),
+      status: document.getElementById('status'),
+      tips: document.getElementById('tips'),
+      showSystem: document.getElementById('showSystem')
+    };
+
+    // Default values (editable)
+    els.baseUrl.value = localStorage.getItem('cg_baseUrl') || 'https://api.openai.com/v1';
+    els.model.value = localStorage.getItem('cg_model') || 'gpt-4o-mini';
+    els.apiKey.value = localStorage.getItem('cg_apiKey') || '';
+    els.system.value = localStorage.getItem('cg_system') || 'Anda adalah asisten coding ahli untuk {{lang}}. Hasilkan hanya kode valid, rapih, dan siap pakai. Sertakan komentar penting dan best practice. Jika tugas memerlukan banyak berkas, gabungkan dalam satu berkas bila mungkin dan jelaskan struktur.';
+
+    // Helpful prompt chips
+    const chipList = [
+      'Buat landing page responsif dengan navbar sticky, hero, section fitur (grid), testimoni, dan footer.',
+      'Tulis komponen JavaScript yang memvalidasi form (email, telp) dan menampilkan pesan error yang aksesibel.',
+      'Buat stylesheet CSS tema gelap yang mendukung prefers-color-scheme dengan fokus ring yang jelas.',
+      'Tulis skrip Java yang membaca file CSV dan mengubahnya menjadi JSON dengan Jackson/Gson.',
+      'Buat REST API sederhana dengan Node.js (Express) termasuk route CRUD dan middleware error handling.',
+      'Tulis kueri SQL untuk membuat skema e-commerce (products, users, orders) lengkap dengan index.',
+    ];
+    chipList.forEach(text => {
+      const b = document.createElement('button');
+      b.className = 'chip'; b.textContent = text;
+      b.addEventListener('click', () => els.prompt.value = text);
+      els.tips.appendChild(b);
+    });
+
+    // Update language pill + syntax class
+    els.language.addEventListener('change', () => {
+      const lang = els.language.value;
+      els.langPill.textContent = lang;
+      els.code.className = 'language-' + (lang === 'csharp' ? 'cs' : lang);
+      hljs.highlightElement(els.code);
+    });
+
+    // Persist settings locally (optional)
+    ['baseUrl','model','apiKey','system'].forEach(k => {
+      els[k].addEventListener('change', () => {
+        localStorage.setItem('cg_' + k, els[k].value);
+      });
+    });
+
+    let aborter = null;
+
+    async function generate(){
+      if(aborter){ aborter.abort(); }
+      aborter = new AbortController();
+
+      const baseUrl = els.baseUrl.value.trim();
+      const model = els.model.value.trim();
+      const apiKey = els.apiKey.value.trim();
+      const lang = els.language.value.trim();
+      const temperature = parseFloat(els.temp.value);
+      const max_tokens = parseInt(els.maxTok.value,10);
+      const userPrompt = els.prompt.value.trim();
+      const systemPrompt = (els.system.value || '').replace('{{lang}}', lang);
+
+      if(!baseUrl || !model || !userPrompt){
+        setStatus('Harap isi Base URL, Model, dan Prompt.');
+        return;
+      }
+
+      setStatus('Menghasilkan kode…');
+      els.btnGen.disabled = true; els.btnStop.disabled = false;
+
+      const body = {
+        model,
+        temperature,
+        max_tokens,
+        messages: [
+          ...(els.showSystem.checked && systemPrompt ? [{role:'system', content: systemPrompt}] : []),
+          {role:'user', content: `Bahasa target: ${lang}. Tugas: ${userPrompt}.\n\nKeluarkan hanya kode ${lang} yang lengkap.`}
+        ]
+      };
+
+      try{
+        const res = await fetch(baseUrl.replace(/\/$/, '') + '/chat/completions', {
+          method:'POST',
+          headers:{
+            'Content-Type':'application/json',
+            ...(apiKey ? {'Authorization':'Bearer ' + apiKey} : {})
+          },
+          body: JSON.stringify(body),
+          signal: aborter.signal
+        });
+        if(!res.ok){
+          const t = await res.text();
+          throw new Error('HTTP ' + res.status + ': ' + t);
+        }
+        const json = await res.json();
+        const content = json.choices?.[0]?.message?.content || '';
+
+        // Strip markdown fences if the model returns them
+        const cleaned = cleanupCodeFences(content);
+        renderCode(cleaned, lang);
+        setStatus('Selesai.');
+      } catch(err){
+        if(err.name === 'AbortError'){
+          setStatus('Dihentikan.');
+        } else {
+          console.error(err);
+          setStatus('Gagal: ' + err.message);
+        }
+      } finally {
+        els.btnGen.disabled = false; els.btnStop.disabled = true;
+      }
+    }
+
+    function cleanupCodeFences(text){
+      // Remove leading ```lang ... ``` fences if present
+      const fence = /^```[a-zA-Z0-9+#.-]*\n([\s\S]*?)\n```\s*$/m;
+      const m = text.match(fence);
+      if(m) return m[1];
+      return text.trim();
+    }
+
+    function renderCode(code, lang){
+      els.code.textContent = code || '/* Tidak ada output */';
+      els.code.className = 'language-' + (lang === 'csharp' ? 'cs' : lang);
+      hljs.highlightElement(els.code);
+    }
+
+    function copyOut(){
+      const txt = els.code.textContent;
+      navigator.clipboard.writeText(txt).then(()=> setStatus('Disalin ke clipboard.'));
+    }
+
+    function downloadOut(){
+      const lang = els.language.value;
+      const map = { html:'index.html', css:'styles.css', javascript:'script.js', java:'Main.java', python:'main.py', php:'index.php', csharp:'Program.cs', cpp:'main.cpp', go:'main.go', rust:'main.rs', kotlin:'Main.kt', swift:'main.swift', sql:'schema.sql' };
+      const filename = map[lang] || 'output.txt';
+      const blob = new Blob([els.code.textContent], {type:'text/plain;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = filename; a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearAll(){
+      els.prompt.value='';
+      renderCode('','html');
+      setStatus('Dibersihkan.');
+    }
+
+    function setStatus(msg){ els.status.textContent = msg; }
+
+    // Wire events
+    els.btnGen.addEventListener('click', generate);
+    els.btnStop.addEventListener('click', () => { if(aborter){ aborter.abort(); } });
+    els.btnClear.addEventListener('click', clearAll);
+    els.btnCopy.addEventListener('click', copyOut);
+    els.btnDownload.addEventListener('click', downloadOut);
+
+    // Initialize
+    hljs.highlightAll();
+    setStatus('Siap. Pilih bahasa, isi prompt, lalu klik Generate.');
+  </script></body>
+</html>
